@@ -40,11 +40,17 @@ count_down() {
 	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
 }
 
+play_sound() {
+	afplay ./clock-tick.mp3
+}
+
 main() {
 	while true; do
 
 		work_duration=$((`date +%s` + $work_seconds));
 		break_duration=$((`date +%s` + $break_seconds));
+
+		#play_sound
 
 		while [ "$work_duration" -ge `date +%s` ]; do
 			count_down $work_duration
