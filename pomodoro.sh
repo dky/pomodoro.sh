@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# A Pomodoro timer
+
+work_seconds=${1:-25}*60; # 1500 seconds
+break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+
+notify() {
+	voice="kyoko"
+	notification=$1
+
+	if [ "$notification"  == "pomodoro_done" ]; then
+		notification_message="25 minutes done, Time to take a quick break!"
+		osascript -e 'display notification "Time to take a quick break" with title "Work"';
+	elif [ "$notification" == "short_break" ]; then
+		notification_message="5 minute break done!"
+		osascript -e 'display notification "Time to get back to work" with title "Work"';
+	else {
+		notification_message="15 minute break done!"
+	}
+	fi
+
+	echo $notification_message
+	say -v $voice "$notification_message"
+}
+
+get_response() {
+	read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
+}
+
+count_down() {
+	seconds=$1
+	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
+}
+
+main() {
+	while true; do
+
+		work_duration=$((`date +%s` + $work_seconds));
+		break_duration=$((`date +%s` + $break_seconds));
+
+		while [ "$work_duration" -ge `date +%s` ]; do
+			count_down $work_duration
+		done
+
+		notify pomodoro_done
+		get_response
+
+		while [ "break_duration" -gt `date +%s` ]; do
+			count_down $break_duration
+		done
+
+		notify short_break
+		get_response
+	done
+}
+
+main
