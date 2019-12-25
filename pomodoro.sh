@@ -47,7 +47,7 @@ get_response() {
 
 count_down() {
 	seconds=$1
-	#echo $seconds
+
 	#date_value=$(($seconds - `date +%s`))
 	#echo $date_value
 
@@ -63,7 +63,9 @@ main() {
 
 	while true; do
 		work_duration=$(($seconds_since_unix_epoch + $work_seconds));
-		echo "Work duration: $work_duration"
+		echo "Work duration Unix epoc: $work_duration"
+
+		echo "Duration: `expr $work_duration - $seconds_since_unix_epoch`"
 
 		while [ $work_duration -ge `date +%s` ]; do
 			count_down $work_duration
