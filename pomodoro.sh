@@ -65,38 +65,40 @@ work_seconds=${1:-25}*60; # 1500 seconds
 break_seconds=${2:-work_seconds/300}*60; # 300 seconds
 
 main() {
-	task="Algorithms practice"
-
+	task="Algorithms-practice"
 	seconds_since_unix_epoch=$(date +%s)
-	work_duration=$(($seconds_since_unix_epoch + $work_seconds));
-	duration=$(expr $work_duration - $seconds_since_unix_epoch)
+
+	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds));
+	pomodoro_duration=$(expr $work_duration_epoch - $seconds_since_unix_epoch)
 
 	echo $seconds_since_unix_epoch
 
 	while true; do
 
-		echo "Work duration Unix epoc: $work_duration"
-		echo "Duration of Pomodoro: $duration"
+		echo "Work duration Unix epoc: $work_duration_epoch"
+		echo "Duration of Pomodoro: $pomodoro_duration"
 
-		while [ $work_duration -ge `date +%s` ]; do
-			count_down $work_duration
+		while [ $work_duration_epoch -ge `date +%s` ]; do
+			count_down $work_duration_epoch
 		done
 
 		echo "Pomo done"
 
 		#notify pomodoro_done
+		log_work $task $pomodoro_duration
 		get_response short_break
-		log_work $task $duration
 
-		break_duration=$((`date +%s` + $break_seconds));
-		echo "Break duration: $break_duration"
+		break_duration_epoch=$((`date +%s` + $break_seconds));
+		break_duration=$(expr $break_duration_epoch - $seconds_since_unix_epoch)
 
-		while [ $break_duration -gt `date +%s` ]; do
-			count_down "$break_duration"
+		while [ $break_duration_epoch -gt `date +%s` ]; do
+			count_down "$break_duration_epoch"
 		done
 
 		#notify short_break
+		log_work "short-break" $break_duration
 		get_response another
+
 	done
 }
 
