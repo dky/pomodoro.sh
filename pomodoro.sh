@@ -50,10 +50,6 @@ count_down() {
 	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
 }
 
-play_sound() {
-	afplay ./clock-tick.mp3
-}
-
 main() {
 	work_seconds=${1:-25}*60; # 1500 seconds
 	break_seconds=${2:-work_seconds/300}*60; # 300 seconds
