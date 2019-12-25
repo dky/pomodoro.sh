@@ -47,9 +47,8 @@ get_response() {
 
 count_down() {
 	seconds=$1
-	echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(($seconds - `date +%s`))"
-
-	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
+	echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(expr $seconds - $(date +%s))"
+	echo -ne "$(date -u -j -f %s $(expr $seconds - $(date +%s)) +%H:%M:%S)\r";
 }
 
 work_seconds=${1:-25}*60; # 1500 seconds
@@ -66,7 +65,7 @@ main() {
 		echo "Duration: `expr $work_duration - $seconds_since_unix_epoch`"
 
 		while [ $work_duration -ge `date +%s` ]; do
-			count_down "$work_duration"
+			count_down $work_duration
 		done
 
 		echo "Pomo done"
@@ -81,7 +80,7 @@ main() {
 			count_down "$break_duration"
 		done
 
-		notify short_break
+		#notify short_break
 		get_response another
 	done
 }
