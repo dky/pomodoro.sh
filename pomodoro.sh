@@ -75,8 +75,8 @@ main() {
 		done
 
 		notify pomodoro_done
-		log_work $task $pomodoro_duration
 		get_response short_break
+		log_work $task $pomodoro_duration
 
 		break_duration_epoch=$((`date +%s` + $break_seconds));
 		break_duration=$(expr $break_duration_epoch - $seconds_since_unix_epoch)
@@ -86,8 +86,8 @@ main() {
 		done
 
 		notify short_break
-		log_work "short-break" $break_duration
 		get_response another
+		log_work "short-break" $break_duration
 
 	done
 }
