@@ -20,23 +20,6 @@ notify() {
 	echo $notification_message
 }
 
-get_response() {
-	output=$1
-
-	if [ "$output"  == "short_break" ]; then
-		notification_message="Hit any key to start a short 5 minute break"
-	elif [ "$output" == "another" ]; then
-		notification_message="Ready for another one?"
-		say -v kyoko "Ready for another one?"
-	else {
-		notification_message=""
-	}
-	fi
-
-	echo $notification_message
-	read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
-}
-
 count_down() {
 	seconds=$1
 	#echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(expr $seconds - $(date +%s))"
@@ -61,23 +44,26 @@ main () {
 
 	while true; do
 		date1=$((`date +%s` + $wseconds));
+		pomodoro_duration=$((wseconds / 60))
+
 		while [ "$date1" -ge `date +%s` ]; do
 			echo -ne "$(date -u -j -f %s $(($date1 - `date +%s`)) +%H:%M:%S)\r";
 		done
+
 		notify pomodoro_done
-		#get_response short_break
+		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $task $pomodoro_duration
 
-		read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
-
 		date2=$((`date +%s` + $pseconds));
+		break_duration=$((pseconds / 60))
+
 		while [ "$date2" -gt `date +%s` ]; do
 			echo -ne "$(date -u -j -f %s $(($date2 - `date +%s`)) +%H:%M:%S)\r";
 		done
+
 		notify short_break
-		#get_response another
+		read -n1 -rsp $'Press any key to get another Pomodoro in or Ctrl+C to exit...\n';
 		log_work "short-break" $break_duration
-		read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
 	done
 
 }
