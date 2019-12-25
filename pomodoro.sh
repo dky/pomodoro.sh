@@ -47,9 +47,7 @@ get_response() {
 
 count_down() {
 	seconds=$1
-
-	#date_value=$(($seconds - `date +%s`))
-	#echo $date_value
+	echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(($seconds - `date +%s`))"
 
 	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
 }
@@ -63,24 +61,24 @@ main() {
 
 	while true; do
 		work_duration=$(($seconds_since_unix_epoch + $work_seconds));
-		echo "Work duration Unix epoc: $work_duration"
 
+		echo "Work duration Unix epoc: $work_duration"
 		echo "Duration: `expr $work_duration - $seconds_since_unix_epoch`"
 
 		while [ $work_duration -ge `date +%s` ]; do
-			count_down $work_duration
+			count_down "$work_duration"
 		done
 
 		echo "Pomo done"
 
-		notify pomodoro_done
+		#notify pomodoro_done
 		get_response short_break
 
 		break_duration=$((`date +%s` + $break_seconds));
 		echo "Break duration: $break_duration"
 
 		while [ $break_duration -gt `date +%s` ]; do
-			count_down $break_duration
+			count_down "$break_duration"
 		done
 
 		notify short_break
@@ -89,5 +87,3 @@ main() {
 }
 
 main
-
-#count_down 20
