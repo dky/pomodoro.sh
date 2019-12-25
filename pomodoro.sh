@@ -49,7 +49,7 @@ main () {
 		pomodoro_duration=$((wseconds / 60))
 
 		while [ "$wseconds_epoch" -ge `date +%s` ]; do
-			echo -ne "$(date -u -j -f %s $(($wseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
+			echo -ne "$(date -u -j -f %s $(($wseconds_epoch - `date +%s`)) +%M:%S)\r";
 		done
 
 		notify pomodoro_complete $pomodoro_duration;
@@ -60,7 +60,7 @@ main () {
 		break_duration=$((pseconds / 60))
 
 		while [ "$pseconds_epoch" -gt `date +%s` ]; do
-			echo -ne "$(date -u -j -f %s $(($pseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
+			echo -ne "$(date -u -j -f %s $(($pseconds_epoch - `date +%s`)) +%M:%S)\r";
 		done
 
 		notify short_break_complete $break_duration;
