@@ -51,18 +51,32 @@ count_down() {
 	echo -ne "$(date -u -j -f %s $(expr $seconds - $(date +%s)) +%H:%M:%S)\r";
 }
 
+log_work() {
+	task="$1"
+	duration=$2
+
+	work_log=./pomodoro.log
+	work_date=`date +%m-%d-%y-%H:%M:%S`
+	echo "$work_date,$duration,$task" >> $work_log
+
+}
+
 work_seconds=${1:-25}*60; # 1500 seconds
 break_seconds=${2:-work_seconds/300}*60; # 300 seconds
 
 main() {
+	task="Algorithms practice"
+
 	seconds_since_unix_epoch=$(date +%s)
+	work_duration=$(($seconds_since_unix_epoch + $work_seconds));
+	duration=$(expr $work_duration - $seconds_since_unix_epoch)
+
 	echo $seconds_since_unix_epoch
 
 	while true; do
-		work_duration=$(($seconds_since_unix_epoch + $work_seconds));
 
 		echo "Work duration Unix epoc: $work_duration"
-		echo "Duration: `expr $work_duration - $seconds_since_unix_epoch`"
+		echo "Duration of Pomodoro: $duration"
 
 		while [ $work_duration -ge `date +%s` ]; do
 			count_down $work_duration
@@ -72,6 +86,7 @@ main() {
 
 		#notify pomodoro_done
 		get_response short_break
+		log_work $task $duration
 
 		break_duration=$((`date +%s` + $break_seconds));
 		echo "Break duration: $break_duration"
