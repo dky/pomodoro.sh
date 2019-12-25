@@ -4,14 +4,15 @@
 
 notify() {
 	notification=$1
+	duration=$2
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="25 minutes done, Time to take a quick break!"
-		osascript -e 'display notification "Time to take a quick break" with title "Work"';
+		notification_message="$duration minutes done, Time to take a quick break!"
+		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
 		say -v kyoko "Time to take a break!"
 	elif [ "$notification" == "short_break_complete" ]; then
-		notification_message="5 minute break done!"
-		osascript -e 'display notification "Time to get back to work" with title "Work"';
+		notification_message="$duration minute break done!"
+		osascript -e 'display notification "Time to get back to work" with title "Lets do another one!"';
 	else {
 		notification_message="15 minute break done!"
 	}
@@ -31,13 +32,14 @@ log_work() {
 	duration=$2
 
 	work_log=./pomodoro.log
-	work_date=`date +%m-%d-%y-%H:%M:%S`
-	echo "$work_date,$duration,$task" >> $work_log
+	work_date=`date +%Y-%m-%dT%H:%M:%SZ`
+
+	echo "date=$work_date,duration=$duration,task=$task" >> $work_log
 
 }
 
-wseconds=${1:-25}*60;
-pseconds=${2:-wseconds/300}*60;
+wseconds=${1:-25}*60; # work seconds, default is 25 mins.
+pseconds=${2:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 task="${3:-codebreakers}"
 
 main () {
@@ -50,7 +52,7 @@ main () {
 			echo -ne "$(date -u -j -f %s $(($wseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
-		notify pomodoro_complete
+		notify pomodoro_complete $pomodoro_duration;
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $task $pomodoro_duration
 
@@ -61,7 +63,7 @@ main () {
 			echo -ne "$(date -u -j -f %s $(($pseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
-		notify short_break_complete
+		notify short_break_complete $break_duration;
 		read -n1 -rsp $'Press any key to get another Pomodoro in or Ctrl+C to exit...\n';
 		log_work "short-break" $break_duration
 	done
