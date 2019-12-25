@@ -43,22 +43,22 @@ task="${3:-codebreakers}"
 main () {
 
 	while true; do
-		date1=$((`date +%s` + $wseconds));
+		wseconds_epoch=$((`date +%s` + $wseconds));
 		pomodoro_duration=$((wseconds / 60))
 
-		while [ "$date1" -ge `date +%s` ]; do
-			echo -ne "$(date -u -j -f %s $(($date1 - `date +%s`)) +%H:%M:%S)\r";
+		while [ "$wseconds_epoch" -ge `date +%s` ]; do
+			echo -ne "$(date -u -j -f %s $(($wseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
 		notify pomodoro_done
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $task $pomodoro_duration
 
-		date2=$((`date +%s` + $pseconds));
+		pseconds_epoch=$((`date +%s` + $pseconds));
 		break_duration=$((pseconds / 60))
 
-		while [ "$date2" -gt `date +%s` ]; do
-			echo -ne "$(date -u -j -f %s $(($date2 - `date +%s`)) +%H:%M:%S)\r";
+		while [ "$pseconds_epoch" -gt `date +%s` ]; do
+			echo -ne "$(date -u -j -f %s $(($pseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
 		notify short_break
