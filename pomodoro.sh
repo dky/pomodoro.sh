@@ -53,41 +53,33 @@ log_work() {
 
 }
 
-work_seconds=${1:-25}*60; # 1500 seconds
-break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+wseconds=${1:-25}*60;
+pseconds=${2:-wseconds/300}*60;
 task="${3:-codebreakers}"
 
-main() {
-	seconds_since_unix_epoch=$(date +%s)
-
-	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds))
-	pomodoro_duration=$(($work_duration_epoch - $seconds_since_unix_epoch))
+main () {
 
 	while true; do
-
-		#echo "Work duration Unix epoc: $work_duration_epoch"
-		#echo "Duration of Pomodoro: $pomodoro_duration"
-
-		while [ $work_duration_epoch -ge `date +%s` ]; do
-			count_down $work_duration_epoch
+		date1=$((`date +%s` + $wseconds));
+		while [ "$date1" -ge `date +%s` ]; do
+			echo -ne "$(date -u -j -f %s $(($date1 - `date +%s`)) +%H:%M:%S)\r";
 		done
-
 		notify pomodoro_done
-		get_response short_break
+		#get_response short_break
 		log_work $task $pomodoro_duration
 
-		break_duration_epoch=$((`date +%s` + $break_seconds));
-		break_duration=$(($break_duration_epoch - $seconds_since_unix_epoch))
+		read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
 
-		while [ $break_duration_epoch -gt `date +%s` ]; do
-			count_down "$break_duration_epoch"
+		date2=$((`date +%s` + $pseconds));
+		while [ "$date2" -gt `date +%s` ]; do
+			echo -ne "$(date -u -j -f %s $(($date2 - `date +%s`)) +%H:%M:%S)\r";
 		done
-
 		notify short_break
-		get_response another
+		#get_response another
 		log_work "short-break" $break_duration
-
+		read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
 	done
+
 }
 
 main
