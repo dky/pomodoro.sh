@@ -12,6 +12,7 @@
 
 work_seconds=${1:-25}*60; # 1500 seconds
 break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+
 notify() {
 	voice="kyoko"
 	notification=$1
@@ -32,6 +33,18 @@ notify() {
 }
 
 get_response() {
+	output=$1
+
+	if [ "$output"  == "short_break" ]; then
+		notification_message="Hit any key to start a short 5 minute break"
+	elif [ "$output" == "another" ]; then
+		notification_message="Ready for another one?"
+	else {
+		notification_message=""
+	}
+	fi
+
+	echo $notification_message
 	read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n';
 }
 
@@ -45,26 +58,25 @@ play_sound() {
 }
 
 main() {
+
 	while true; do
-
 		work_duration=$((`date +%s` + $work_seconds));
-		break_duration=$((`date +%s` + $break_seconds));
-
-		#play_sound
 
 		while [ "$work_duration" -ge `date +%s` ]; do
 			count_down $work_duration
 		done
 
 		notify pomodoro_done
-		get_response
+		get_response short_break
 
-		while [ "break_duration" -gt `date +%s` ]; do
+		break_duration=$((`date +%s` + $break_seconds));
+
+		while [ "$break_duration" -gt `date +%s` ]; do
 			count_down $break_duration
 		done
 
 		notify short_break
-		get_response
+		get_response another
 	done
 }
 
