@@ -47,7 +47,7 @@ get_response() {
 
 count_down() {
 	seconds=$1
-	echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(expr $seconds - $(date +%s))"
+	#echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(expr $seconds - $(date +%s))"
 	echo -ne "$(date -u -j -f %s $(expr $seconds - $(date +%s)) +%H:%M:%S)\r";
 }
 
@@ -65,7 +65,7 @@ work_seconds=${1:-25}*60; # 1500 seconds
 break_seconds=${2:-work_seconds/300}*60; # 300 seconds
 
 main() {
-	task="Algorithms-practice"
+	task="${3:-codebreakers}"
 	seconds_since_unix_epoch=$(date +%s)
 
 	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds));
@@ -82,9 +82,7 @@ main() {
 			count_down $work_duration_epoch
 		done
 
-		echo "Pomo done"
-
-		#notify pomodoro_done
+		notify pomodoro_done
 		log_work $task $pomodoro_duration
 		get_response short_break
 
@@ -95,7 +93,7 @@ main() {
 			count_down "$break_duration_epoch"
 		done
 
-		#notify short_break
+		notify short_break
 		log_work "short-break" $break_duration
 		get_response another
 
