@@ -8,6 +8,7 @@ notify() {
 	if [ "$notification"  == "pomodoro_done" ]; then
 		notification_message="25 minutes done, Time to take a quick break!"
 		osascript -e 'display notification "Time to take a quick break" with title "Work"';
+		say -v kyoko "Time to take a break!"
 	elif [ "$notification" == "short_break" ]; then
 		notification_message="5 minute break done!"
 		osascript -e 'display notification "Time to get back to work" with title "Work"';
@@ -17,7 +18,6 @@ notify() {
 	fi
 
 	echo $notification_message
-	say -v kyoko "$notification_message"
 }
 
 get_response() {
@@ -40,7 +40,7 @@ get_response() {
 count_down() {
 	seconds=$1
 	#echo "seconds_to_count: $seconds, epoc_now: $(date +%s), Now - Seconds = $(expr $seconds - $(date +%s))"
-	echo -ne "$(date -u -j -f %s $(expr $seconds - $(date +%s)) +%H:%M:%S)\r";
+	echo -ne "$(date -u -j -f %s $(($seconds - $(date +%s))) +%H:%M:%S)\r";
 }
 
 log_work() {
@@ -63,12 +63,10 @@ main() {
 	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds));
 	pomodoro_duration=$(expr $work_duration_epoch - $seconds_since_unix_epoch)
 
-	echo $seconds_since_unix_epoch
-
 	while true; do
 
-		echo "Work duration Unix epoc: $work_duration_epoch"
-		echo "Duration of Pomodoro: $pomodoro_duration"
+		#echo "Work duration Unix epoc: $work_duration_epoch"
+		#echo "Duration of Pomodoro: $pomodoro_duration"
 
 		while [ $work_duration_epoch -ge `date +%s` ]; do
 			count_down $work_duration_epoch
