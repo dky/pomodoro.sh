@@ -1,17 +1,8 @@
 #!/bin/bash
 #
 # A Pomodoro timer - Because productivity...
-# Underlying principles
-# There are six steps in the original technique:
-# 1. Decide on the task to be done.
-# 2. Set the pomodoro timer (traditionally to 25 minutes).
-# 3. Work on the task.
-# 4. End work when the timer rings and put a checkmark on a piece of paper.[6]
-# 5. If you have fewer than four checkmarks, take a short break (3–5 minutes), then go to step 2.
-# 6. After four pomodoros, take a longer break (15–30 minutes), reset your checkmark count to zero, then go to step 1.
 
 notify() {
-	voice="kyoko"
 	notification=$1
 
 	if [ "$notification"  == "pomodoro_done" ]; then
@@ -26,7 +17,7 @@ notify() {
 	fi
 
 	echo $notification_message
-	say -v $voice "$notification_message"
+	say -v kyoko "$notification_message"
 }
 
 get_response() {
@@ -36,6 +27,7 @@ get_response() {
 		notification_message="Hit any key to start a short 5 minute break"
 	elif [ "$output" == "another" ]; then
 		notification_message="Ready for another one?"
+		say -v kyoko "Ready for another one?"
 	else {
 		notification_message=""
 	}
@@ -63,9 +55,9 @@ log_work() {
 
 work_seconds=${1:-25}*60; # 1500 seconds
 break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+task="${3:-codebreakers}"
 
 main() {
-	task="${3:-codebreakers}"
 	seconds_since_unix_epoch=$(date +%s)
 
 	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds));
