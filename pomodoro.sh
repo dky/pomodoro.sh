@@ -10,9 +10,6 @@
 # 5. If you have fewer than four checkmarks, take a short break (3–5 minutes), then go to step 2.
 # 6. After four pomodoros, take a longer break (15–30 minutes), reset your checkmark count to zero, then go to step 1.
 
-work_seconds=${1:-25}*60; # 1500 seconds
-break_seconds=${2:-work_seconds/300}*60; # 300 seconds
-
 notify() {
 	voice="kyoko"
 	notification=$1
@@ -58,9 +55,15 @@ play_sound() {
 }
 
 main() {
+	work_seconds=${1:-25}*60; # 1500 seconds
+	break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+
+	seconds_since_unix_epoch=$(date +%s)
+	echo $seconds_since_unix_epoch
 
 	while true; do
-		work_duration=$((`date +%s` + $work_seconds));
+		work_duration=$(($seconds_since_unix_epoch + $work_seconds));
+		echo $work_duration
 
 		while [ "$work_duration" -ge `date +%s` ]; do
 			count_down $work_duration
