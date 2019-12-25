@@ -47,30 +47,37 @@ get_response() {
 
 count_down() {
 	seconds=$1
+	#echo $seconds
+	#date_value=$(($seconds - `date +%s`))
+	#echo $date_value
+
 	echo -ne "$(date -u -j -f %s $(($seconds - `date +%s`)) +%H:%M:%S)\r";
 }
 
-main() {
-	work_seconds=${1:-25}*60; # 1500 seconds
-	break_seconds=${2:-work_seconds/300}*60; # 300 seconds
+work_seconds=${1:-25}*60; # 1500 seconds
+break_seconds=${2:-work_seconds/300}*60; # 300 seconds
 
+main() {
 	seconds_since_unix_epoch=$(date +%s)
 	echo $seconds_since_unix_epoch
 
 	while true; do
 		work_duration=$(($seconds_since_unix_epoch + $work_seconds));
-		echo $work_duration
+		echo "Work duration: $work_duration"
 
-		while [ "$work_duration" -ge `date +%s` ]; do
+		while [ $work_duration -ge `date +%s` ]; do
 			count_down $work_duration
 		done
+
+		echo "Pomo done"
 
 		notify pomodoro_done
 		get_response short_break
 
 		break_duration=$((`date +%s` + $break_seconds));
+		echo "Break duration: $break_duration"
 
-		while [ "$break_duration" -gt `date +%s` ]; do
+		while [ $break_duration -gt `date +%s` ]; do
 			count_down $break_duration
 		done
 
@@ -80,3 +87,5 @@ main() {
 }
 
 main
+
+#count_down 20
