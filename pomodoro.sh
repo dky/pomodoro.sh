@@ -60,8 +60,8 @@ task="${3:-codebreakers}"
 main() {
 	seconds_since_unix_epoch=$(date +%s)
 
-	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds));
-	pomodoro_duration=$(expr $work_duration_epoch - $seconds_since_unix_epoch)
+	work_duration_epoch=$(($seconds_since_unix_epoch + $work_seconds))
+	pomodoro_duration=$(($work_duration_epoch - $seconds_since_unix_epoch))
 
 	while true; do
 
@@ -77,7 +77,7 @@ main() {
 		log_work $task $pomodoro_duration
 
 		break_duration_epoch=$((`date +%s` + $break_seconds));
-		break_duration=$(expr $break_duration_epoch - $seconds_since_unix_epoch)
+		break_duration=$(($break_duration_epoch - $seconds_since_unix_epoch))
 
 		while [ $break_duration_epoch -gt `date +%s` ]; do
 			count_down "$break_duration_epoch"
