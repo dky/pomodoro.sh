@@ -5,11 +5,11 @@
 notify() {
 	notification=$1
 
-	if [ "$notification"  == "pomodoro_done" ]; then
+	if [ "$notification"  == "pomodoro_complete" ]; then
 		notification_message="25 minutes done, Time to take a quick break!"
 		osascript -e 'display notification "Time to take a quick break" with title "Work"';
 		say -v kyoko "Time to take a break!"
-	elif [ "$notification" == "short_break" ]; then
+	elif [ "$notification" == "short_break_complete" ]; then
 		notification_message="5 minute break done!"
 		osascript -e 'display notification "Time to get back to work" with title "Work"';
 	else {
@@ -50,7 +50,7 @@ main () {
 			echo -ne "$(date -u -j -f %s $(($wseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
-		notify pomodoro_done
+		notify pomodoro_complete
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $task $pomodoro_duration
 
@@ -61,7 +61,7 @@ main () {
 			echo -ne "$(date -u -j -f %s $(($pseconds_epoch - `date +%s`)) +%H:%M:%S)\r";
 		done
 
-		notify short_break
+		notify short_break_complete
 		read -n1 -rsp $'Press any key to get another Pomodoro in or Ctrl+C to exit...\n';
 		log_work "short-break" $break_duration
 	done
