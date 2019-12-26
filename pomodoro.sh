@@ -9,7 +9,7 @@ notify() {
 	if [ "$notification"  == "pomodoro_complete" ]; then
 		notification_message="$duration minute pomodoro done, Time to take a quick break!"
 		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
-		say -v kyoko "Time to take a break!"
+		#say -v kyoko "Time to take a break!"
 	elif [ "$notification" == "short_break_complete" ]; then
 		notification_message="$duration minute break done!"
 		osascript -e 'display notification "Time to get back to work" with title "Lets do another one!"';
@@ -38,15 +38,15 @@ log_work() {
 
 }
 
-wseconds=${1:-25}*60; # work seconds, default is 25 mins.
-pseconds=${2:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 
 main () {
+	task="${1:-codebreakers}";
+	wseconds=${2:-25}*60; # work seconds, default is 25 mins.
+	pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 
 	while true; do
 		wseconds_epoch=$((`date +%s` + $wseconds));
 		pomodoro_duration=$((wseconds / 60));
-		task="${3:-codebreakers}";
 
 		while [ "$wseconds_epoch" -ge `date +%s` ]; do
 			echo -ne "$(gdate -u --date @$(($wseconds_epoch - `date +%s` )) +%H:%M:%S)\r";
@@ -70,4 +70,4 @@ main () {
 
 }
 
-main
+main $1 $2 $3
