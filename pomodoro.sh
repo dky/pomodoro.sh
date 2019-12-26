@@ -53,7 +53,9 @@ main () {
 	#pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 	pseconds=3
 
+	# Log the break type as long or short, useful for log analysis
 	break_type=short
+	# How many Pomodoro's done this session, resets to zero at 4.
 	pomodoro_count=0
 
 	while true; do
@@ -79,7 +81,7 @@ main () {
 		fi
 
 		notify pomodoro_complete $pomodoro_duration;
-		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n\n';
+		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
 		pseconds_epoch=$((`$DATE_CMD +%s` + $pseconds));
@@ -90,7 +92,7 @@ main () {
 		done
 
 		notify short_break_complete $break_duration;
-		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n\n';
+		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n';
 		log_work $break_type $break_duration 1;
 	done
 }
