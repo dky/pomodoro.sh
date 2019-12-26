@@ -62,11 +62,11 @@ main () {
 		pomodoro_seconds_epoch=$((`$DATE_CMD +%s` + $pomodoro_seconds));
 		pomodoro_duration=$((pomodoro_seconds / 60));
 
-		printf "Pomodoro we are currently working on: $pomodoro_name, Pomodoros completed for $pomodoro_name: $pomodoro_count this session\n\n"
+		printf "Currently working on: $pomodoro_name, Pomodoros completed for $pomodoro_name: $pomodoro_count this session\n\n"
 
 		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in this Pomodoro: $($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
-			sleep 5 # Don't render update every second this was killing cpu...
+			sleep 0.1 # Sleep for 1/10th of a second to not kill cpu.
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
@@ -79,7 +79,7 @@ main () {
 
 			printf "Awesome Job! You just completed: 4 pomodoros for $pomodoro_name, time for a well deserved long break!\n"
 			printf "Whatever you do, don't stare at the screen for 30 mins!\n"
-			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
+			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4 after this break!\n"
 		else
 			notify pomodoro_complete $pomodoro_duration;
 		fi
@@ -91,8 +91,8 @@ main () {
 		break_duration=$((break_seconds / 60));
 
 		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
-			echo -ne "Break remaining: $($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
-			sleep 5 # Don't render update every second this was killing cpu...
+			echo -ne "Time left in Break: $($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+			sleep 0.1 # Sleep for 1/10th of a second to not kill cpu.
 		done
 
 		notify short_break_complete $break_duration;
