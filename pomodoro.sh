@@ -31,18 +31,21 @@ count_down() {
 }
 
 log_work() {
+	work_log=./pomodoro.log
+
+	work_date=`$DATE_CMD +%Y-%m-%dT%H:%M:%SZ`
 	task="$1"
 	duration=$2
-	work_log=./pomodoro.log
-	work_date=`$DATE_CMD +%Y-%m-%dT%H:%M:%SZ`
+	count=$3
 
 	if [[ ! -e $work_log ]]; then
 		touch $work_log
 	fi
 
-	echo "date=$work_date,duration=$duration,task=$task" >> $work_log
+	echo "$work_date,$task,$duration,$count" >> $work_log
 
 }
+
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
@@ -51,19 +54,31 @@ main () {
 	#pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 	pseconds=3
 
+	pomodoro_count=0
+	break_count=0
+
 	while true; do
 		wseconds_epoch=$((`$DATE_CMD +%s` + $wseconds));
 		pomodoro_duration=$((wseconds / 60));
 
 		echo "Pomodoro we are working on: $pomodoro_name"
+		echo "Current pomodoros completed: $pomodoro_count"
 
 		while [ "$wseconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "$($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 		done
 
+		pomodoro_count=$((pomodoro_count+1))
+
+		if [ $pomodoro_count -eq 4 ];then
+			echo "You completed 4, time for a longer break!"
+			pseconds=10
+			pomodoro_count=0
+		fi
+
 		notify pomodoro_complete $pomodoro_duration;
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
-		log_work $pomodoro_name $pomodoro_duration;
+		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
 		pseconds_epoch=$((`$DATE_CMD +%s` + $pseconds));
 		break_duration=$((pseconds / 60));
@@ -72,12 +87,13 @@ main () {
 			echo -ne "$($DATE_CMD -u --date @$(($pseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 		done
 
+		break_count=$((break_count+1))
+
 		notify short_break_complete $break_duration;
 		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n';
-		log_work "short-break" $break_duration;
+		log_work "short-break" $break_duration $break_count;
 		echo $1
 	done
-
 }
 
 main $1 $2 $3
