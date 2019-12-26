@@ -9,9 +9,10 @@ notify() {
 	duration=$2
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="$duration minute Pomodoro done, Time to take a quick break!"
+		notification_message="$duration minute Pomodoro done, Time to take a quick break and log progress!"
 		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
-		say -v kyoko "休憩時間"
+		#say -v kyoko "休憩時間"
+		say -v kyoko "やった"
 	elif [ "$notification" == "short_break_complete" ]; then
 		notification_message="$duration minute break done!"
 		osascript -e 'display notification "Time to get back to work" with title "Lets do another one!"';
@@ -44,15 +45,17 @@ log_work() {
 }
 
 main () {
-	task="${1:-codebreakers}";
-	wseconds=${2:-25}*60; # work seconds, default is 25 mins.
-	pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
+	pomodoro_name="${1:-codebreakers}";
+	#wseconds=${2:-25}*60; # work seconds, default is 25 mins.
+	wseconds=3
+	#pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
+	pseconds=3
 
 	while true; do
 		wseconds_epoch=$((`$DATE_CMD +%s` + $wseconds));
 		pomodoro_duration=$((wseconds / 60));
 
-		echo "This is the task we are working on: $task"
+		echo "Pomodoro we are working on: $pomodoro_name"
 
 		while [ "$wseconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "$($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
@@ -60,7 +63,7 @@ main () {
 
 		notify pomodoro_complete $pomodoro_duration;
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
-		log_work $task $pomodoro_duration;
+		log_work $pomodoro_name $pomodoro_duration;
 
 		pseconds_epoch=$((`$DATE_CMD +%s` + $pseconds));
 		break_duration=$((pseconds / 60));
@@ -72,6 +75,7 @@ main () {
 		notify short_break_complete $break_duration;
 		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n';
 		log_work "short-break" $break_duration;
+		echo $1
 	done
 
 }
