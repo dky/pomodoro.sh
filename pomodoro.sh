@@ -7,7 +7,7 @@ notify() {
 	duration=$2
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="$duration minute pomodoro done, Time to take a quick break!"
+		notification_message="$duration minute Pomodoro done, Time to take a quick break!"
 		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
 		#say -v kyoko "Time to take a break!"
 	elif [ "$notification" == "short_break_complete" ]; then
