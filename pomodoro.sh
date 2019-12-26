@@ -48,11 +48,10 @@ log_work() {
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
-	#wseconds=${2:-25}*60; # work seconds, default is 25 mins.
-	wseconds=3
-	#pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
-	pseconds=3
-
+	wseconds=${2:-25}*60; # work seconds, default is 25 mins.
+	#wseconds=3 # 3 seconds for testing.
+	pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
+	#pseconds=3 # 3 seconds for testing.
 	# Log the break type as long or short, useful for log analysis
 	break_type=short
 	# How many Pomodoro's done this session, resets to zero at 4.
@@ -71,13 +70,14 @@ main () {
 		pomodoro_count=$((pomodoro_count+1))
 
 		if [ $pomodoro_count -eq 4 ];then
-			printf "Awesome Job! You just completed: 4 pomodoros for $pomodoro_name, time for a well deserved long break!\n"
-			printf "Whatever you do, don't stare at the screen for 30 mins!\n"
-			pseconds=10
-
-			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
+			pseconds=1800 # 30 mins
+			#pseconds=10 # 10 seconds for testing...
 			pomodoro_count=0
 			break_type=long
+
+			printf "Awesome Job! You just completed: 4 pomodoros for $pomodoro_name, time for a well deserved long break!\n"
+			printf "Whatever you do, don't stare at the screen for 30 mins!\n"
+			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
 		else
 			notify pomodoro_complete $pomodoro_duration;
 		fi
