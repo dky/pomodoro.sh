@@ -1,6 +1,6 @@
 # Pomodoro timer in Shell
 
-This script was hacked together to better quantify how much time I'll be spending on practicing Algorithms with [Codebreakers.io](https://codebreakers.io)and other things...
+This script was hacked together to better quantify how much time I'll be spending on practicing Algorithms with [codebreakers.io](https://codebreakers.io).
 
 ## Usage
 
