@@ -69,10 +69,11 @@ main () {
 		pomodoro_count=$((pomodoro_count+1))
 
 		if [ $pomodoro_count -eq 4 ];then
-			printf "Awesome Job! 4 pomodoros for $pomodoro_name, time for a long well deserved break!\n"
+			printf "Awesome Job! You just completed: 4 pomodoros for $pomodoro_name, time for a well deserved long break!\n"
+			printf "Whatever you do, don't stare at the screen for 30 mins!\n"
 			pseconds=10
 
-			echo "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
+			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
 			pomodoro_count=0
 			break_type=long
 		fi
