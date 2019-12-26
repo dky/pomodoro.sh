@@ -1,7 +1,6 @@
 # Pomodoro timer in Shell
 
-This script was hacked together to better quantify how much time I'll be spending on practicing Algorithms and other things...
-It's in the terminal so win!
+This script was hacked together to better quantify how much time I'll be spending on practicing Algorithms with [Codebreakers.io](https://codebreakers.io)and other things...
 
 ## Usage
 
@@ -11,9 +10,16 @@ Script accepts 3 arguments:
 ./pomodoro.sh your-task 25 5
 ```
 
-- The task you want to work on.
+- The task you want to work on. (**Note** The task needs to be separated with `-` for now if it contains spaces, otherwise it will break the output in the log)
 - How much time you want to spend on the task (Pomodoro duration in minutes)
 - Break duration (minutes)
+
+If you just invoke it by default with:
+```bash
+./pomodoro.sh
+```
+
+It will just start a `25` minute Pomodoro with a default break of `5` minutes. The task will be named `codebreakers` in the pomodoro.log.
 
 ## Features
 
@@ -35,9 +41,9 @@ This is only supported on MacOS for the time being, although porting it to Linux
 
 ## MacOS directions
 
-This script was coded on a MacOS machine. However we did not use the native system date command because it was a bit fussy...
+There's an external dependency on `gdate` for the `date` command because the BSD date was giving us a nightmare of a time...
 
-Instead install `coreutils` to leverage `gdate` with
+Install `coreutils` to leverage `gdate` with
 
 ```bash
 brew install coreutils
