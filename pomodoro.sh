@@ -2,6 +2,7 @@
 #
 # A Pomodoro timer - Because productivity...
 
+# Use coreutils gdate on OSX, go away BSD date...
 DATE_CMD=gdate
 
 notify() {
