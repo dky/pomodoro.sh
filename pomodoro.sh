@@ -30,9 +30,12 @@ count_down() {
 log_work() {
 	task="$1"
 	duration=$2
-
 	work_log=./pomodoro.log
 	work_date=`date +%Y-%m-%dT%H:%M:%SZ`
+
+	if [[ ! -e $work_log ]]; then
+		touch $work_log
+	fi
 
 	echo "date=$work_date,duration=$duration,task=$task" >> $work_log
 
