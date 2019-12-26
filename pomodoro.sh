@@ -78,9 +78,10 @@ main () {
 			printf "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
 			pomodoro_count=0
 			break_type=long
+		else
+			notify pomodoro_complete $pomodoro_duration;
 		fi
 
-		notify pomodoro_complete $pomodoro_duration;
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
