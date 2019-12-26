@@ -49,31 +49,31 @@ log_work() {
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
-	wseconds=${2:-25}*60; # work seconds, default is 25 mins.
-	#wseconds=3 # 3 seconds for testing.
-	pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
-	#pseconds=3 # 3 seconds for testing.
+	pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
+	#pomodoro_seconds=3 # 3 seconds for testing.
+	break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
+	#break_seconds=3 # 3 seconds for testing.
 	# Log the break type as long or short, useful for log analysis
 	break_type=short
 	# How many Pomodoro's done this session, resets to zero at 4.
 	pomodoro_count=0
 
 	while true; do
-		wseconds_epoch=$((`$DATE_CMD +%s` + $wseconds));
-		pomodoro_duration=$((wseconds / 60));
+		pomodoro_seconds_epoch=$((`$DATE_CMD +%s` + $pomodoro_seconds));
+		pomodoro_duration=$((pomodoro_seconds / 60));
 
 		printf "Pomodoro we are currently working on: $pomodoro_name, Pomodoros completed for $pomodoro_name: $pomodoro_count this session\n\n"
 
-		while [ "$wseconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			echo -ne "Time left in this Pomodoro: $($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
+			echo -ne "Time left in this Pomodoro: $($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 			sleep 5 # Don't render update every second this was killing cpu...
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
 
 		if [ $pomodoro_count -eq 4 ];then
-			pseconds=1800 # 30 mins
-			#pseconds=10 # 10 seconds for testing...
+			break_seconds=1800 # 30 mins
+			#break_seconds=10 # 10 seconds for testing...
 			pomodoro_count=0
 			break_type=long
 
@@ -87,11 +87,11 @@ main () {
 		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
 		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
-		pseconds_epoch=$((`$DATE_CMD +%s` + $pseconds));
-		break_duration=$((pseconds / 60));
+		break_seconds_epoch=$((`$DATE_CMD +%s` + $break_seconds));
+		break_duration=$((break_seconds / 60));
 
-		while [ "$pseconds_epoch" -gt `$DATE_CMD +%s` ]; do
-			echo -ne "Break remaining: $($DATE_CMD -u --date @$(($pseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
+			echo -ne "Break remaining: $($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 			sleep 5 # Don't render update every second this was killing cpu...
 		done
 
