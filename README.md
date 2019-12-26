@@ -9,3 +9,13 @@
 4. End work when the timer rings and put a checkmark on a piece of paper.
 5. If you have fewer than four checkmarks, take a short break (3–5 minutes), then go to step 2.
 6. After four pomodoros, take a longer break (15–30 minutes), reset your checkmark count to zero, then go to step 1.
+
+## MacOS directions
+
+This script was coded on a MacOS machine. However we did not use the native system date command because it was a bit fussy...
+
+Instead install `coreutils` to leverage `gdate` with
+
+```bash
+brew install coreutils
+```
