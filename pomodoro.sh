@@ -65,6 +65,7 @@ main () {
 
 		while [ "$wseconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in this Pomodoro: $($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+			sleep 5 # Don't render update every second this was killing cpu...
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
@@ -90,6 +91,7 @@ main () {
 
 		while [ "$pseconds_epoch" -gt `$DATE_CMD +%s` ]; do
 			echo -ne "Break remaining: $($DATE_CMD -u --date @$(($pseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+			sleep 5 # Don't render update every second this was killing cpu...
 		done
 
 		notify short_break_complete $break_duration;
