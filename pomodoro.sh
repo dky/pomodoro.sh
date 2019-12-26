@@ -9,18 +9,18 @@ notify() {
 	duration=$2
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="$duration minute Pomodoro done, Time to take a quick break and log progress!"
+		notification_message="$duration minute Pomodoro done! Time to take a quick break and log progress."
 		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
 		say -v kyoko "やった"
 	elif [ "$notification" == "short_break_complete" ]; then
-		notification_message="$duration minute break done!"
+		notification_message="$duration minute break done! Let's get ready to crush another one!"
 		osascript -e 'display notification "Time to get back to work" with title "Lets do another one!"';
 	else {
 		notification_message="15 minute break done!"
 	}
 	fi
 
-	echo $notification_message
+	printf "$notification_message\n\n"
 }
 
 count_down() {
@@ -53,45 +53,44 @@ main () {
 	#pseconds=${3:-wseconds/300}*60; # pause/break seconds, default is 5 mins
 	pseconds=3
 
+	break_type=short
 	pomodoro_count=0
 
 	while true; do
 		wseconds_epoch=$((`$DATE_CMD +%s` + $wseconds));
 		pomodoro_duration=$((wseconds / 60));
 
-		echo "Pomodoro we are currently working on: $pomodoro_name, Pomodoros completed for $pomodoro_name: $pomodoro_count this session"
+		printf "Pomodoro we are currently working on: $pomodoro_name, Pomodoros completed for $pomodoro_name: $pomodoro_count this session\n\n"
 
 		while [ "$wseconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			echo -ne "$($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+			echo -ne "Time left in this Pomodoro: $($DATE_CMD -u --date @$(($wseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
 
 		if [ $pomodoro_count -eq 4 ];then
-			echo "You completed 4 pomodoros for $pomodoro_name, time for a long well deserved break!"
-			echo "Good Job!"
-
+			printf "Awesome Job! 4 pomodoros for $pomodoro_name, time for a long well deserved break!\n"
 			pseconds=10
 
-			echo "Resetting Pomodoro counts for $pomodoro_name"
+			echo "Resetting Pomodoro counts for $pomodoro_name, let's do another 4!\n"
 			pomodoro_count=0
+			break_type=long
 		fi
 
 		notify pomodoro_complete $pomodoro_duration;
-		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n';
+		read -n1 -rsp $'Press any key to take a break or Ctrl+C to exit...\n\n';
 		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
 		pseconds_epoch=$((`$DATE_CMD +%s` + $pseconds));
 		break_duration=$((pseconds / 60));
 
 		while [ "$pseconds_epoch" -gt `$DATE_CMD +%s` ]; do
-			echo -ne "$($DATE_CMD -u --date @$(($pseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
+			echo -ne "Break remaining: $($DATE_CMD -u --date @$(($pseconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r";
 		done
 
 		notify short_break_complete $break_duration;
-		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n';
-		log_work "short-break" $break_duration $break_count;
-		echo $1
+		read -n1 -rsp $'Press any key to start another Pomodoro or Ctrl+C to exit...\n\n';
+		log_work $break_type $break_duration 1;
 	done
 }
 
