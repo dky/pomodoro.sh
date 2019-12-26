@@ -23,7 +23,8 @@ It will just start a `25` minute Pomodoro with a default break of `5` minutes. T
 
 ## Features
 
-Outputs to a `pomodoro.log` in the current directory so you can see what you've done for today.
+- Outputs to a `pomodoro.log` in the current directory so you can see what you've done for today.
+- After 4 short Pomodoros you'll get prompted for a long break automatically without breaking your work flow on a task.
 
 ## Underlying principles
 ## There are six steps in the original technique:
