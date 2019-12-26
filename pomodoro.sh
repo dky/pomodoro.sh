@@ -59,18 +59,18 @@ log_work() {
 	fi
 
 	# Log it
-	echo "$work_date,$task,$duration,$count" >> $work_log
+	echo "date_completed=$work_date,task=$task,task_duration=$duration,task_count=$count" >> $work_log
 }
 
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
-	#pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
-	pomodoro_seconds=3 # 3 seconds for testing.
-	#break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
-	break_seconds=3 # 3 seconds for testing.
+	pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
+	#pomodoro_seconds=3 # 3 seconds for testing.
+	break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
+	#break_seconds=3 # 3 seconds for testing.
 	# Log the break type as long or short, useful for log analysis
-	break_type=short
+	break_type=short-break
 	# How many pomodoros done this session, resets to zero at 4.
 	pomodoro_count=0
 
@@ -91,7 +91,7 @@ main () {
 			break_seconds=1800 # 30 mins
 			#break_seconds=10 # 10 seconds for testing...
 			pomodoro_count=0
-			break_type=long
+			break_type=long-break
 
 			printf "Awesome Job! You just completed: ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
 			printf "Time for a well deserved ${YELLOW}30${NC} min break!\n";
