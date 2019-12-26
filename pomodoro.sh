@@ -38,27 +38,37 @@ count_down() {
 }
 
 log_work() {
-	work_log=./pomodoro.log
-
 	work_date=`$DATE_CMD +%Y-%m-%dT%H:%M:%SZ`
 	task="$1"
 	duration=$2
 	count=$3
 
+	# Individual Log date
+	daily_log_date=`$DATE_CMD -I`
+	# Where to store daily logs
+	log_dir=./log
+	work_log=./$log_dir/$daily_log_date-pomodoro.log
+
+	# Check if there's a log dir
+	if [ ! -d "$log_dir" ]; then
+		mkdir -p $log_dir
+	fi
+	# Check if there's a daily log file
 	if [[ ! -e $work_log ]]; then
 		touch $work_log
 	fi
 
+	# Log it
 	echo "$work_date,$task,$duration,$count" >> $work_log
 }
 
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
-	pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
-	#pomodoro_seconds=3 # 3 seconds for testing.
-	break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
-	#break_seconds=3 # 3 seconds for testing.
+	#pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
+	pomodoro_seconds=3 # 3 seconds for testing.
+	#break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
+	break_seconds=3 # 3 seconds for testing.
 	# Log the break type as long or short, useful for log analysis
 	break_type=short
 	# How many pomodoros done this session, resets to zero at 4.
