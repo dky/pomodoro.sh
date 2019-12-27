@@ -17,18 +17,18 @@ notify() {
 	duration=$2
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="${YELLOW}$duration${NC} minute ${RED}pomodoro${NC} done! Time to take a quick ${YELLOW}5${NC} min break and log progress."
+		notification_message="${YELLOW}$duration${NC} minute ${RED}pomodoro${NC} done! Time to take a quick ${YELLOW}5${NC} min break and log progress.";
 		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
 		say -v kyoko "やった"
 	elif [ "$notification" == "short_break_complete" ]; then
-		notification_message="${YELLOW}$duration${NC} minute break done! Let's get ready to crush another one!"
+		notification_message="${YELLOW}$duration${NC} minute break done! 👍 Let's get ready to crush another one!";
 		osascript -e 'display notification "Time to get back to work" with title "Lets complete another Pomodoro!"';
 	else {
-		notification_message="15 minute break done!"
+		notification_message="15 minute break done!";
 	}
 	fi
 
-	printf "$notification_message\n\n"
+	printf "$notification_message\n\n";
 }
 
 count_down() {
@@ -59,7 +59,7 @@ log_work() {
 	fi
 
 	# Log it
-	echo "$work_date,$task,$duration,$count" >> $work_log
+	echo "$work_date,$task,$duration,$count" >> $work_log;
 }
 
 
@@ -93,7 +93,7 @@ main () {
 			pomodoro_count=0
 			break_type=long-break
 
-			printf "Awesome Job! 👍 You just completed: ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
+			printf "🚀🚀🚀 Awesome Job! 🚀🚀🚀 You just completed: ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
 			printf "Time for a well deserved ${YELLOW}30${NC} min break!\n";
 			printf "Whatever you do, don't stare at the screen for ${YELLOW}30${NC} mins!\n";
 			printf "Resetting ${RED}pomodoro${NC} counts for ${CYAN}$pomodoro_name${NC}, let's do another ${YELLOW}4${NC} after this break!\n";
