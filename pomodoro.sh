@@ -59,7 +59,7 @@ log_work() {
 	fi
 
 	# Log it
-	echo "date_completed=$work_date,task=$task,task_duration=$duration,task_count=$count" >> $work_log
+	echo "$work_date,$task,$duration,$count" >> $work_log
 }
 
 
