@@ -93,7 +93,7 @@ main () {
 			pomodoro_count=0
 			break_type=long-break
 
-			printf "Awesome Job! You just completed: ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
+			printf "Awesome Job! 👍 You just completed: ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
 			printf "Time for a well deserved ${YELLOW}30${NC} min break!\n";
 			printf "Whatever you do, don't stare at the screen for ${YELLOW}30${NC} mins!\n";
 			printf "Resetting ${RED}pomodoro${NC} counts for ${CYAN}$pomodoro_name${NC}, let's do another ${YELLOW}4${NC} after this break!\n";
