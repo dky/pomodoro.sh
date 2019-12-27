@@ -82,7 +82,7 @@ main () {
 
 		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in this pomodoro: ${GREEN}$($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
-			sleep 0.1 # Sleep for 1/10th/200ms of a second to not kill cpu.
+			sleep 1 # Sleep for 1 second to not kill cpu.
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
@@ -109,7 +109,7 @@ main () {
 
 		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in Break: ${GREEN}$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
-			sleep 0.1 # Sleep for 1/10th/200ms of a second to not kill cpu.
+			sleep 1 # Sleep for 1 second to not kill cpu.
 		done
 
 		notify short_break_complete $break_duration;
