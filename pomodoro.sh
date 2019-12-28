@@ -15,14 +15,17 @@ NC='\033[0m' # No Color
 notify() {
 	notification=$1
 	duration=$2
+	osa_script=/usr/bin/osascript
+	afplay_script=/usr/bin/afplay
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
 		notification_message="${YELLOW}$duration${NC} minute ${RED}pomodoro${NC} done! Time to take a quick ${YELLOW}5${NC} min break and log progress.";
-		osascript -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
-		say -v kyoko "やった"
+		$osa_script -e 'display notification "Time to take a quick break" with title "Pomodoro Complete"';
+		$afplay_script media/train-alert-on.mp3
 	elif [ "$notification" == "short_break_complete" ]; then
 		notification_message="${YELLOW}$duration${NC} minute break done! 👍 Let's get ready to crush another one!";
-		osascript -e 'display notification "Time to get back to work" with title "Lets complete another Pomodoro!"';
+		$osa_script -e 'display notification "Time to get back to work" with title "Lets complete another Pomodoro!"';
+		$afplay_script media/train-alert-off.mp3
 	else {
 		notification_message="15 minute break done!";
 	}
@@ -73,6 +76,7 @@ main () {
 	break_type=short-break
 	# How many pomodoros done this session, resets to zero at 4.
 	pomodoro_count=0
+	sleep_duration=1 # sleep for 1 second
 
 	while true; do
 		pomodoro_seconds_epoch=$((`$DATE_CMD +%s` + $pomodoro_seconds));
@@ -82,7 +86,7 @@ main () {
 
 		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in this ${RED}pomodoro${NC}: ${GREEN}$($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
-			sleep 1 # Sleep for 1 second to not kill cpu.
+			sleep $sleep_duration
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
@@ -109,7 +113,7 @@ main () {
 
 		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
 			echo -ne "Time left in Break: ${GREEN}$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
-			sleep 1 # Sleep for 1 second to not kill cpu.
+			sleep $sleep_duration
 		done
 
 		notify short_break_complete $break_duration;
