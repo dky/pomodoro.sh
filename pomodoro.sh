@@ -85,7 +85,8 @@ main () {
 		printf "Currently working on: ${CYAN}$pomodoro_name${NC}, ${RED}pomodoros${NC} completed for: ${CYAN}$pomodoro_name${NC}: ${YELLOW}$pomodoro_count${NC} this session\n\n"
 
 		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			echo -ne "Time left in this ${RED}pomodoro${NC}: ${GREEN}$($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
+			date_count_down=$($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
+			echo -ne "Time left in this ${RED}pomodoro${NC}: ${GREEN}$date_count_down\r${NC}";
 			sleep $sleep_duration
 		done
 
