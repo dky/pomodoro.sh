@@ -68,10 +68,10 @@ log_work() {
 
 main () {
 	pomodoro_name="${1:-codebreakers}";
-	pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
-	#pomodoro_seconds=3 # 3 seconds for testing.
-	break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
-	#break_seconds=3 # 3 seconds for testing.
+	#pomodoro_seconds=${2:-25}*60; # work seconds, default is 25 mins.
+	pomodoro_seconds=3 # 3 seconds for testing.
+	#break_seconds=${3:-pomodoro_seconds/300}*60; # pause/break seconds, default is 5 mins
+	break_seconds=3 # 3 seconds for testing.
 	# Log the break type as long or short, useful for log analysis
 	break_type=short-break
 	# How many pomodoros done this session, resets to zero at 4.
@@ -113,7 +113,8 @@ main () {
 		break_duration=$((break_seconds / 60));
 
 		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
-			echo -ne "Time left in Break: ${GREEN}$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)\r${NC}";
+			break_count_down=$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
+			echo -ne "Time left in Break: ${GREEN}$break_count_down\r${NC}";
 			sleep $sleep_duration
 		done
 
