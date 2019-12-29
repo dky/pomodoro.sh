@@ -112,7 +112,7 @@ main () {
 		break_seconds_epoch=$((`$DATE_CMD +%s` + $break_seconds));
 		break_duration=$((break_seconds / 60));
 
-		while [ "$break_seconds_epoch" -gt `$DATE_CMD +%s` ]; do
+		while [ "$break_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			break_count_down=$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
 			echo -ne "Time left in Break: ${GREEN}$break_count_down\r${NC}";
 			sleep $sleep_duration
