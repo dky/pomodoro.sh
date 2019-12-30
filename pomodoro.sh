@@ -19,11 +19,11 @@ notify() {
 	afplay_script=/usr/bin/afplay
 
 	if [ "$notification"  == "pomodoro_complete" ]; then
-		notification_message="${YELLOW}$duration${NC} minute 🍅 ${RED}pomodoro${NC} done! Time to take a quick ${YELLOW}5${NC} min break and log progress.";
+		notification_message="${YELLOW}$duration${NC} minute 🍅 ${RED}Pomodoro${NC} done! 👍 Time to take a quick ${YELLOW}5${NC} min break and log progress.";
 		$osa_script -e 'display notification "Time to take a quick break" with title "🍅 Pomodoro Complete"';
 		$afplay_script media/train-alert-on.mp3
 	elif [ "$notification" == "short_break_complete" ]; then
-		notification_message="${YELLOW}$duration${NC} minute 🛌 break done! 👍 Let's get ready to crush another one!";
+		notification_message="${YELLOW}$duration${NC} minute 🛌 break done! Ready for another one?";
 		$osa_script -e 'display notification "Time to get back to work" with title "Lets complete another Pomodoro!"';
 		$afplay_script media/train-alert-off.mp3
 	else {
@@ -83,50 +83,56 @@ main () {
 
 		printf "Currently working on: ${CYAN}$pomodoro_name${NC}. ${RED}Pomodoros${NC} completed for ${CYAN}$pomodoro_name${NC}: ${YELLOW}$pomodoro_count${NC} 🍅 this session\n\n"
 
-		count() {
-			start_seconds=$1
-			date_count_down=$($DATE_CMD -u --date @$(($start_seconds - `$DATE_CMD +%s` )) +%H:%M:%S)
-			echo -ne "Time left in this 🍅 ${RED}pomodoro${NC}: ${GREEN}$date_count_down\r${NC}"
+		count_down() {
+			count_seconds=$1
+			count_message=$2
+			date_count_down=$($DATE_CMD -u --date @$(($count_seconds - `$DATE_CMD +%s` )) +%H:%M:%S)
+
+			if [ "$count_message"  == "pomodoro" ]; then
+				echo -ne "Time left in 🍅 ${RED}Pomodoro${NC}: ${GREEN}$date_count_down\r${NC}"
+			elif [ "$count_message" == "break" ]; then
+				echo -ne "Time left in Break 🛌: ${GREEN}$date_count_down\r${NC}";
+			fi
+
 		}
 
-		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			count $pomodoro_seconds_epoch &
-			afplay media/tick.mp3
-			sleep 0.3
-		done
-
-		pomodoro_count=$((pomodoro_count+1))
-
-		if [ $pomodoro_count -eq 4 ];then
-			break_seconds=1800 # 30 mins
-			#break_seconds=10 # 10 seconds for testing...
-			pomodoro_count=0
-			break_type=long-break
-
-			printf "🚀🚀🚀 Awesome Job! 🚀🚀🚀 You just completed: 🍅 ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
-			printf "Time for a well deserved ${YELLOW}30${NC} min break!\n";
-			printf "Whatever you do, don't 👀 stare at the screen for ${YELLOW}30${NC} mins!\n";
-			printf "Resetting 🍅 ${RED}pomodoro${NC} counts for ${CYAN}$pomodoro_name${NC}, let's do another ${YELLOW}4${NC} 🍅 after this break!\n";
-		else
-			notify pomodoro_complete $pomodoro_duration;
-		fi
-
-		read -n1 -rsp $'Press \e[36many key\e[0m to take a \e[35mbreak 🛌\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
-		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
-
-		break_seconds_epoch=$((`$DATE_CMD +%s` + $break_seconds));
-		break_duration=$((break_seconds / 60));
-
-		while [ "$break_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			break_count_down=$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
-			echo -ne "Time left in Break 🛌: ${GREEN}$break_count_down\r${NC}";
-			sleep 1
-		done
-
-		notify short_break_complete $break_duration;
-		read -n1 -rsp $'Press \e[36many key\e[0m to \e[35mstart another\e[0m 🍅 \e[31mpomodoro\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
-		log_work $break_type $break_duration 1;
+	while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
+		count_down $pomodoro_seconds_epoch pomodoro &
+		afplay media/tick.mp3
+		sleep 0.3
 	done
+
+	pomodoro_count=$((pomodoro_count+1))
+
+	if [ $pomodoro_count -eq 4 ];then
+		break_seconds=1800 # 30 mins
+		#break_seconds=10 # 10 seconds for testing...
+		pomodoro_count=0
+		break_type=long-break
+
+		printf "🚀🚀🚀 Awesome Job! 🚀🚀🚀 You just completed: 🍅 ${YELLOW}4${NC} ${RED}pomodoros${NC} for ${CYAN}$pomodoro_name${NC}\n";
+		printf "Time for a well deserved ${YELLOW}30${NC} min break!\n";
+		printf "Whatever you do, don't 👀 stare at the screen for ${YELLOW}30${NC} mins!\n";
+		printf "Resetting 🍅 ${RED}Pomodoro${NC} counts for ${CYAN}$pomodoro_name${NC}, let's do another ${YELLOW}4${NC} 🍅 after this break!\n";
+	else
+		notify pomodoro_complete $pomodoro_duration;
+	fi
+
+	read -n1 -rsp $'Press \e[36many key\e[0m to take a \e[35mbreak 🛌\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
+	log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
+
+	break_seconds_epoch=$((`$DATE_CMD +%s` + $break_seconds));
+	break_duration=$((break_seconds / 60));
+
+	while [ "$break_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
+		count_down $break_seconds_epoch break
+		sleep 1
+	done
+
+	notify short_break_complete $break_duration;
+	read -n1 -rsp $'Press \e[36many key\e[0m to \e[35mstart another\e[0m 🍅 \e[31mPomodoro\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
+	log_work $break_type $break_duration 1;
+done
 }
 
 main $1 $2 $3
