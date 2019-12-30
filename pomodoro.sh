@@ -111,7 +111,7 @@ main () {
 			notify pomodoro_complete $pomodoro_duration;
 		fi
 
-		read -n1 -rsp $'Press \e[36many key\e[0m to take the \e[35mbreak 🛌\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
+		read -n1 -rsp $'Press \e[36many key\e[0m to take a \e[35mbreak 🛌\e[0m or \e[36mCtrl+C\e[0m to exit...\n\n';
 		log_work $pomodoro_name $pomodoro_duration $pomodoro_count;
 
 		break_seconds_epoch=$((`$DATE_CMD +%s` + $break_seconds));
