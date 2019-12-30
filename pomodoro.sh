@@ -76,7 +76,6 @@ main () {
 	break_type=short-break
 	# How many pomodoros done this session, resets to zero at 4.
 	pomodoro_count=0
-	sleep_duration=0.3 # sleep for 1 second
 
 	while true; do
 		pomodoro_seconds_epoch=$((`$DATE_CMD +%s` + $pomodoro_seconds));
@@ -93,7 +92,7 @@ main () {
 		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			count $pomodoro_seconds_epoch &
 			afplay media/tick.mp3
-			sleep $sleep_duration
+			sleep 0.3
 		done
 
 		pomodoro_count=$((pomodoro_count+1))
@@ -121,7 +120,7 @@ main () {
 		while [ "$break_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 			break_count_down=$($DATE_CMD -u --date @$(($break_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
 			echo -ne "Time left in Break 🛌: ${GREEN}$break_count_down\r${NC}";
-			sleep $sleep_duration
+			sleep 1
 		done
 
 		notify short_break_complete $break_duration;
