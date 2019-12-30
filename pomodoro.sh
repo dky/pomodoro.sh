@@ -76,7 +76,7 @@ main () {
 	break_type=short-break
 	# How many pomodoros done this session, resets to zero at 4.
 	pomodoro_count=0
-	sleep_duration=1 # sleep for 1 second
+	sleep_duration=0.3 # sleep for 1 second
 
 	while true; do
 		pomodoro_seconds_epoch=$((`$DATE_CMD +%s` + $pomodoro_seconds));
@@ -84,9 +84,15 @@ main () {
 
 		printf "Currently working on: ${CYAN}$pomodoro_name${NC}. ${RED}Pomodoros${NC} completed for ${CYAN}$pomodoro_name${NC}: ${YELLOW}$pomodoro_count${NC} 🍅 this session\n\n"
 
-		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
-			date_count_down=$($DATE_CMD -u --date @$(($pomodoro_seconds_epoch - `$DATE_CMD +%s` )) +%H:%M:%S)
+		count() {
+			start_seconds=$1
+			date_count_down=$($DATE_CMD -u --date @$(($start_seconds - `$DATE_CMD +%s` )) +%H:%M:%S)
 			echo -ne "Time left in this 🍅 ${RED}pomodoro${NC}: ${GREEN}$date_count_down\r${NC}"
+		}
+
+		while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
+			count $pomodoro_seconds_epoch &
+			afplay media/tick.mp3
 			sleep $sleep_duration
 		done
 
