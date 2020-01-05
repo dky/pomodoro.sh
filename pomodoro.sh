@@ -98,7 +98,7 @@ main () {
 
 	while [ "$pomodoro_seconds_epoch" -ge `$DATE_CMD +%s` ]; do
 		count_down $pomodoro_seconds_epoch pomodoro &
-		afplay media/tick.mp3
+		afplay -v 0.2 media/tick.mp3
 		sleep 0.3
 	done
 
